@@ -1,0 +1,24 @@
+
+AC_PREREQ([2.63])
+AC_INIT([blockip],[0.1])
+AC_CONFIG_SRCDIR([src/main.cpp])
+AM_INIT_AUTOMAKE
+
+AC_CONFIG_HEADERS([config.h])
+
+CFLAGS="-std=gnu++11 -O2 -Wall"
+CXXFLAGS="-std=gnu++11 -O2 -Wall"
+
+AC_PROG_CXX
+AC_PROG_INSTALL
+
+TMP11="$CXXFLAGS"
+AC_SUBST([AM_CXXFLAGS], $TMP11)
+
+
+AC_CONFIG_FILES(
+    Makefile
+    src/Makefile
+    )
+
+AC_OUTPUT
