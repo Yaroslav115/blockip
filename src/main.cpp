@@ -16,15 +16,12 @@ int main(int argc, char *argv[])
 {
   FILE *fini;
   char buf[128];
-  cerr << "A0\n";
+  cerr << 1;
   fini= fopen("/home/yaroslav/projects/plockip/src/block.ini","r");
-  cerr << "A1\n";
   while(fgets(buf,128,fini) != NULL)
   {
-      cerr << "A2\n";
+    cerr << 1;
   }
-  cerr << "A3\n";
   fclose(fini);
-  cerr << "A4\n";
   return 0;
 };
