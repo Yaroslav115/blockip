@@ -43,9 +43,10 @@ int main(int argc, char *argv[])
   while(fgets(buf,128,fini) != NULL)
   {
     ubirakaprobelov(buf);
+    if(buf[0]=='\n')
+      continue;
+    else
     cout << buf;
-    //char *h=strchr(buf,'=');
-    
   }
   fclose(fini);
   return 0;
