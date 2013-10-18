@@ -10,17 +10,42 @@
 #include <map>
 
 using namespace std;
-
+char *ubirakaprobelov(char *buf)
+{
+  int len=strlen(buf);
+  int cnt=0;
+  for(int i=0;i<len;i++)
+  {
+    if(buf[i]==' ')
+    {
+      cnt++;
+      for(int j=i;j<len-1;++j)
+      {
+	buf[j]=buf[j+1];
+      }
+    }
+  }
+  buf[len-cnt]='\0';
+  return buf;
+}
 
 int main(int argc, char *argv[])
 {
   FILE *fini;
   char buf[128];
-  cerr << 1;
-  fini= fopen("/home/yaroslav/projects/plockip/src/block.ini","r");
+  cerr << 1<< "\n";
+  fini= fopen("/home/yaroslav/projects/blockip/src/block.ini","r");
+  if(!fini)
+  {
+    cerr<<"Error open file"<<endl;
+    return -1;
+  }
   while(fgets(buf,128,fini) != NULL)
   {
-    cerr << 1;
+    ubirakaprobelov(buf);
+    cout << buf;
+    //char *h=strchr(buf,'=');
+    
   }
   fclose(fini);
   return 0;
