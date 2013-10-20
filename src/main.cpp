@@ -58,11 +58,11 @@ int main(int argc, char *argv[])
       tmpvar[i]=buf[i];
     }
     cout<<tmpvar<<endl;
-    for (int j=pos;j<strlen(buf);j++)
+    int len2=strlen(buf)-1;
+    for (int j=pos;j<len2;j++)
     {
       tmpmean[j-pos]=buf[j];
     } 
-    cout<<tmpmean<<endl;//???? при выходе изх цикла массив не сохраняется 
     inivar[tmpvar]=tmpmean;
     cout<<inivar[tmpvar]<<endl;
     }
