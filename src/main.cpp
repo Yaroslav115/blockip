@@ -61,10 +61,11 @@ int main(int argc, char *argv[])
     for (int j=pos;j<strlen(buf);j++)
     {
       tmpmean[j]=buf[j];
-      cout<<tmpmean[j];
+      cout<<tmpmean[j];//записывает в массив
     } 
-    cout<<tmpmean<<endl;
-    //map inivar[tmpvar]=;
+    cout<<tmpmean<<endl;//???? при выходе изх цикла массив не сохраняется 
+    inivar[tmpvar]=tmpmean;
+    cout<<inivar[tmpvar]<<endl;
     }
   fclose(fini);
   return 0;
