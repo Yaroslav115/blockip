@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
     if(buf[0]=='\n')
       continue;
     //читаем строки ищем равно заносим в маp
-    char tmpvar[128]={};
-    char tmpmean[128]={};
+    char tmpvar[128]={0};
+    char tmpmean[128]={0};
     char *pch=strchr(buf,'=');
     int pos=pch-buf+1;//number of element =
     for (int i=0;i<pos-1;i++)
@@ -60,8 +60,7 @@ int main(int argc, char *argv[])
     cout<<tmpvar<<endl;
     for (int j=pos;j<strlen(buf);j++)
     {
-      tmpmean[j]=buf[j];
-      cout<<tmpmean[j];//записывает в массив
+      tmpmean[j-pos]=buf[j];
     } 
     cout<<tmpmean<<endl;//???? при выходе изх цикла массив не сохраняется 
     inivar[tmpvar]=tmpmean;
