@@ -49,13 +49,21 @@ int main(int argc, char *argv[])
     if(buf[0]=='\n')
       continue;
     //читаем строки ищем равно заносим в маp
-    string tmpvar;
-    string tmpmean;
+    char tmpvar[128]={};
+    char tmpmean[128]={};
     char *pch=strchr(buf,'=');
     int pos=pch-buf+1;//number of element =
-    cout<<pos<<endl;
-    //tmpvar=
-    
+    for (int i=0;i<pos-1;i++)
+    {
+      tmpvar[i]=buf[i];
+    }
+    cout<<tmpvar<<endl;
+    for (int j=pos;j<strlen(buf);j++)
+    {
+      tmpmean[j]=buf[j];
+      cout<<tmpmean[j];
+    } 
+    cout<<tmpmean<<endl;
     //map inivar[tmpvar]=;
     }
   fclose(fini);
