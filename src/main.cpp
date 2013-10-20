@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 {
   FILE *fini;
   char buf[128];
+  map<string,string>inivar;
   cerr << 1<< "\n";
   fini= fopen("/home/yaroslav/projects/blockip/src/block.ini","r");
   if(!fini)
@@ -47,9 +48,16 @@ int main(int argc, char *argv[])
     ubirakaprobelov(buf);
     if(buf[0]=='\n')
       continue;
-    else
-    cout << buf;
-  }
+    //читаем строки ищем равно заносим в маp
+    string tmpvar;
+    string tmpmean;
+    char *pch=strchr(buf,'=');
+    int pos=pch-buf+1;//number of element =
+    cout<<pos<<endl;
+    //tmpvar=
+    
+    //map inivar[tmpvar]=;
+    }
   fclose(fini);
   return 0;
 };
