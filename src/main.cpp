@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include <iostream>
 #include <string>
@@ -12,7 +13,8 @@
 using namespace std;
 
 map<string,string>inivar;
-char *flag="POST";
+map<string,int>mnth;
+const char *flag="POST";
 
 //--------------------
 char *ubirakaprobelov(char *buf)
@@ -75,7 +77,7 @@ int inireader(void)
   return 1; 
 }
 //----------------------
-int ishack(char *acbuf, char *flag)//1 hack 0 no hack
+int ishack(char *acbuf, const char *flag)//1 hack 0 no hack
 {
    if(strstr(acbuf,flag)!=NULL)
     {
@@ -90,6 +92,19 @@ int ishack(char *acbuf, char *flag)//1 hack 0 no hack
 
 int main(int argc, char *argv[])
 {
+  mnth["Jan"] = 0;
+  mnth["Feb"] = 1;
+  mnth["Mar"] = 2;
+  mnth["Apr"] = 3;
+  mnth["May"] = 4;
+  mnth["Jun"] = 5;
+  mnth["Jul"] = 6;
+  mnth["Aug"] = 7;
+  mnth["Sep"] = 8;
+  mnth["Oct"] = 9;
+  mnth["Nov"] = 10;
+  mnth["Dec"] = 11;
+  
   inireader();
   //--------------------
   FILE *faccesslog;
@@ -105,7 +120,8 @@ int main(int argc, char *argv[])
   {
     char ipbuf[128]={0};
     char dateh[128]={0};
-    cout<<"IS"<<ishack(acbuf, flag)<<endl;
+    int day,year,hr,mt,sc,gmt;
+    char month[4];
     if(ishack(acbuf, flag))
     {
       //читаем ip
@@ -132,6 +148,24 @@ int main(int argc, char *argv[])
       }
       cout<<dateh<<endl;
       //разбор даты
+      sscanf(dateh,"%d/%c%c%c/%d:%d:%d:%d +%d]",&day,&month[0],&month[1],&month[2],&year,&hr,&mt,&sc,&gmt);
+      month[3]=0;
+      
+      cout<<day<<" "<<month<<" "<<year<<" "<<hr<<" "<<mt<<" "<<sc<<" "<<gmt<<endl;
+      time_t tmsec;
+      tm t;
+      t.tm_sec=sc;
+      t.tm_min=mt;
+      t.tm_hour=hr;
+      t.tm_mday=day;
+      t.tm_mon=mnth[month];
+      t.tm_year=year-1900;
+      t.tm_wday=0;
+      t.tm_yday=0;
+      t.tm_isdst=0;
+      tmsec=mktime(&t);
+      cout<<tmsec<<endl;
+      
     }
   }
   return 0;
