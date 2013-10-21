@@ -12,6 +12,8 @@
 using namespace std;
 
 map<string,string>inivar;
+char *flag="POST";
+
 //--------------------
 char *ubirakaprobelov(char *buf)
 {
@@ -73,7 +75,18 @@ int inireader(void)
   return 1; 
 }
 //----------------------
-
+int ishack(char *acbuf, char *flag)//1 hack 0 no hack
+{
+   if(strstr(acbuf,flag)!=NULL)
+    {
+     if(strstr(acbuf,inivar["Template"].c_str())!=NULL)
+       return 1;
+     else
+       return 0;
+    }
+    else
+      return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -87,16 +100,10 @@ int main(int argc, char *argv[])
     return -1;
   }
   char acbuf[128];//strstr
-  char *flag="POST";
+  
   while(fgets(acbuf,128,faccesslog) != NULL)
   {
-    cerr<<acbuf<<endl;
-    if(strstr(acbuf,flag)!=NULL)
-    {
-     cout<<33333<<endl;
-     if(strstr(acbuf,inivar["Template"].c_str())!=NULL)
-       cout<<44444<<endl;
-    }
+    cout<< ishack(acbuf, flag)<<endl;
   }
   
   return 0;
