@@ -10,6 +10,9 @@
 #include <map>
 
 using namespace std;
+
+map<string,string>inivar;
+//--------------------
 char *ubirakaprobelov(char *buf)
 {
   int len=strlen(buf);
@@ -30,12 +33,12 @@ char *ubirakaprobelov(char *buf)
   buf[len-cnt]='\0';
   return buf;
 }
-
-int main(int argc, char *argv[])
+//-----------------
+int inireader(void)
 {
   FILE *fini;
   char buf[128];
-  map<string,string>inivar;
+  
   cerr << 1<< "\n";
   fini= fopen("/home/yaroslav/projects/blockip/src/block.ini","r");
   if(!fini)
@@ -67,5 +70,34 @@ int main(int argc, char *argv[])
     cout<<inivar[tmpvar]<<endl;
     }
   fclose(fini);
+  return 1; 
+}
+//----------------------
+
+
+int main(int argc, char *argv[])
+{
+  inireader();
+  //--------------------
+  FILE *faccesslog;
+  faccesslog=fopen(inivar["SrcLog"].c_str(),"r");
+  if(!faccesslog)
+  {
+    cerr<<"Error open access file"<<endl;
+    return -1;
+  }
+  char acbuf[128];//strstr
+  char *flag="POST";
+  while(fgets(acbuf,128,faccesslog) != NULL)
+  {
+    cerr<<acbuf<<endl;
+    if(strstr(acbuf,flag)!=NULL)
+    {
+     cout<<33333<<endl;
+     if(strstr(acbuf,inivar["Template"].c_str())!=NULL)
+       cout<<44444<<endl;
+    }
+  }
+  
   return 0;
 };
