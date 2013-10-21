@@ -85,7 +85,7 @@ int ishack(char *acbuf, char *flag)//1 hack 0 no hack
        return 0;
     }
     else
-      return 0;
+       return 0;
 }
 
 int main(int argc, char *argv[])
@@ -103,8 +103,36 @@ int main(int argc, char *argv[])
   
   while(fgets(acbuf,128,faccesslog) != NULL)
   {
-    cout<< ishack(acbuf, flag)<<endl;
+    char ipbuf[128]={0};
+    char dateh[128]={0};
+    cout<<"IS"<<ishack(acbuf, flag)<<endl;
+    if(ishack(acbuf, flag))
+    {
+      //читаем ip
+      int i=0;
+      while(acbuf[i]!='-')
+      {
+	ipbuf[i]=acbuf[i];
+	i++;
+      }
+      cout<<ipbuf<<endl;
+    
+    //читаем время
+    //ищем символ [
+      char *pch2=strchr(acbuf,'[');
+      int poss=pch2-acbuf+1;//number of element =
+    //ищем символ ]
+      char *pch3=strchr(acbuf,']');
+      int posf=pch3-acbuf;
+    //выделяем подмассив данных
+      cout<<poss<<endl<<posf<<endl;
+      for (int j=poss;j<posf;j++)
+      {
+	dateh[j-poss]=acbuf[j];
+      }
+      cout<<dateh<<endl;
+      //разбор даты
+    }
   }
-  
   return 0;
 };
