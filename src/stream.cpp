@@ -16,16 +16,9 @@ int main(int argc, char **argv)
   flwrite=fopen(argv[2],"w");
   if(argc==4)
     delay=atoi(argv[3]);
-  cout<<"read"<<argv[1]<<endl;
-  cout<<"write"<<argv[2]<<endl;
   if(!flread)
   {
     cerr<<"Error open read file"<<endl;
-    return -1;
-  }
-  if(!flwrite)
-  {
-    cerr<<"Error open write file"<<endl;
     return -1;
   }
   while(fgets(buf,128,flread) != NULL)
