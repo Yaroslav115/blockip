@@ -15,7 +15,7 @@ using namespace std;
 map<string,string>inivar;
 map<string,int>mnth;
 const char *flag="POST";
-
+int trycr;
 //--------------------
 char *ubirakaprobelov(char *buf)
 {
@@ -140,7 +140,6 @@ int main(int argc, char *argv[])
       char *pch3=strchr(acbuf,']');
       int posf=pch3-acbuf;
     //выделяем подмассив данных
-      cout<<poss<<endl<<posf<<endl;
       for (int j=poss;j<posf;j++)
       {
 	dateh[j-poss]=acbuf[j];
@@ -163,9 +162,11 @@ int main(int argc, char *argv[])
       t.tm_yday=0;
       t.tm_isdst=0;
       tmsec=mktime(&t);
+      trycr++;
       cout<<tmsec<<endl;
     }
   }
+  cout<<"popitok bilo"<<trycr<<endl;
   //===================
   return 0;
 };
