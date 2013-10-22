@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   FILE *flread;
   FILE *flwrite;
   int delay=1000;
-  char buf[128];
+  char buf[16*1024];
   
   flread=fopen(argv[1],"r");
   flwrite=fopen(argv[2],"w");
@@ -21,10 +21,11 @@ int main(int argc, char **argv)
     cerr<<"Error open read file"<<endl;
     return -1;
   }
-  while(fgets(buf,128,flread) != NULL)
+  while(fgets(buf,sizeof(buf),flread) != NULL)
   {
     usleep(delay);
     fputs(buf,flwrite);
+    fflush(flwrite);
   }
   fclose(flread);
   fclose(flwrite);

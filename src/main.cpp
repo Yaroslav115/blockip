@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
   mnth["Dec"] = 11;
   
   inireader();
-  //--------------------
+  //=====================
   FILE *faccesslog;
   faccesslog=fopen(inivar["SrcLog"].c_str(),"r");
   if(!faccesslog)
@@ -164,8 +164,8 @@ int main(int argc, char *argv[])
       t.tm_isdst=0;
       tmsec=mktime(&t);
       cout<<tmsec<<endl;
-      
     }
   }
+  //===================
   return 0;
 };
