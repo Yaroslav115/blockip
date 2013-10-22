@@ -26,7 +26,6 @@ char *ubirakaprobelov(char *buf)
     if(buf[i]==' ')
     {
       cnt++;
-      
       for (int j=i;j<len-1; j++)
       {
 	buf[j]=buf[j+1];
