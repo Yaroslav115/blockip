@@ -9,13 +9,20 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "log.h"
 
 using namespace std;
 
 map<string,string>inivar;
 map<string,int>mnth;
 const char *flag="POST";
-int trycr;
+int brcount=0;
+struct breaking
+{
+  char ip[128]={0};
+  int time=0;
+}trybr;
+
 //--------------------
 char *ubirakaprobelov(char *buf)
 {
@@ -88,35 +95,9 @@ int ishack(char *acbuf, const char *flag)//1 hack 0 no hack
     else
        return 0;
 }
-
-int main(int argc, char *argv[])
+//------------------------------
+breaking iptyme(char *acbuf)
 {
-  mnth["Jan"] = 0;
-  mnth["Feb"] = 1;
-  mnth["Mar"] = 2;
-  mnth["Apr"] = 3;
-  mnth["May"] = 4;
-  mnth["Jun"] = 5;
-  mnth["Jul"] = 6;
-  mnth["Aug"] = 7;
-  mnth["Sep"] = 8;
-  mnth["Oct"] = 9;
-  mnth["Nov"] = 10;
-  mnth["Dec"] = 11;
-  
-  inireader();
-  //=====================
-  FILE *faccesslog;
-  faccesslog=fopen(inivar["SrcLog"].c_str(),"r");
-  if(!faccesslog)
-  {
-    cerr<<"Error open access file"<<endl;
-    return -1;
-  }
-  char acbuf[128];//strstr
-  
-  while(fgets(acbuf,128,faccesslog) != NULL)
-  {
     char ipbuf[128]={0};
     char dateh[128]={0};
     int day,year,hr,mt,sc,gmt;
@@ -129,9 +110,8 @@ int main(int argc, char *argv[])
       {
 	ipbuf[i]=acbuf[i];
 	i++;
+        trybr.ip[i]=ipbuf[i];
       }
-      cout<<ipbuf<<endl;
-    
     //читаем время
     //ищем символ [
       char *pch2=strchr(acbuf,'[');
@@ -162,11 +142,56 @@ int main(int argc, char *argv[])
       t.tm_yday=0;
       t.tm_isdst=0;
       tmsec=mktime(&t);
-      trycr++;
-      cout<<tmsec<<endl;
+      trybr.time=tmsec;
+      return trybr;
     }
+    else
+    {
+      for(unsigned int i=0;i<sizeof(trybr.ip);i++)
+      trybr.ip[i]=0;
+      trybr.time=0;
+      return trybr;
+    }
+  
+}
+//-----------------------------
+
+int main(int argc, char *argv[])
+{
+  
+  log("start log ip");
+  mnth["Jan"] = 0;
+  mnth["Feb"] = 1;
+  mnth["Mar"] = 2;
+  mnth["Apr"] = 3;
+  mnth["May"] = 4;
+  mnth["Jun"] = 5;
+  mnth["Jul"] = 6;
+  mnth["Aug"] = 7;
+  mnth["Sep"] = 8;
+  mnth["Oct"] = 9;
+  mnth["Nov"] = 10;
+  mnth["Dec"] = 11;
+  
+  inireader();
+  FILE *faccesslog;
+  faccesslog=fopen(inivar["SrcLog"].c_str(),"r");
+  if(!faccesslog)
+  {
+    cerr<<"Error open access file"<<endl;
+    return -1;
   }
-  cout<<"popitok bilo"<<trycr<<endl;
-  //===================
+  char acbuf[128];
+  
+  while(fgets(acbuf,128,faccesslog) != NULL)
+  {
+    trybr=iptyme(acbuf);
+    if(trybr.time)
+    {
+      brcount++;
+      cout<<trybr.time<<endl<<trybr.ip<<endl;
+    } 
+  }
+  cout<<"popitok bilo "<<brcount<<endl;
   return 0;
 };
