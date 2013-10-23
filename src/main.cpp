@@ -17,6 +17,7 @@ map<string,string>inivar;
 map<string,int>mnth;
 const char *flag="POST";
 int brcount=0;
+
 struct breaking
 {
   char ip[128]={0};
@@ -108,7 +109,7 @@ breaking iptyme(char *acbuf)
       int i=0;
       while(acbuf[i]!='-')
       {
-	ipbuf[i]=acbuf[i];
+	ipbuf[i]=acbuf[i];//????
 	trybr.ip[i]=ipbuf[i];
 	i++;
        }
@@ -149,9 +150,34 @@ breaking iptyme(char *acbuf)
       trybr.time=0;
       return trybr;
     }
-  
 }
 //-----------------------------
+
+int banhummer(breaking trybr)
+{
+  FILE *banf;
+  string str=inivar["BlockDir"]+'/'+trybr.ip+".log";
+  str.erase(str.find(' '), 1);
+  cout<<str<<endl;
+  if(trybr.time)
+  {
+    if(banf=fopen(str.c_str(),"r"))
+    {  
+      fclose(banf);
+      cerr<<"have file"<<endl;
+      return 0;
+    }
+    else
+    {
+      banf=fopen(str.c_str(),"w");
+      cerr<<"open file "<<str<<endl;
+      fputs(str.c_str(),banf);
+      fflush(banf);
+      fclose(banf);
+    }
+  }
+  return 1;
+}
 
 int main(int argc, char *argv[])
 {
@@ -185,8 +211,10 @@ int main(int argc, char *argv[])
     trybr=iptyme(acbuf);
     if(trybr.time)
     {
+      
       brcount++;
       cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
+      banhummer(trybr);
     } 
   }
   cout<<"popitok bilo "<<brcount<<endl;
