@@ -112,7 +112,6 @@ breaking iptyme(char *acbuf)
 	trybr.ip[i]=ipbuf[i];
 	i++;
        }
-     // cout<<ipbuf<<endl;
     //читаем время
     //ищем символ [
       char *pch2=strchr(acbuf,'[');
@@ -125,12 +124,9 @@ breaking iptyme(char *acbuf)
       {
 	dateh[j-poss]=acbuf[j];
       }
-      cout<<dateh<<endl;
       //разбор даты
       sscanf(dateh,"%d/%c%c%c/%d:%d:%d:%d +%d]",&day,&month[0],&month[1],&month[2],&year,&hr,&mt,&sc,&gmt);
       month[3]=0;
-      
-      cout<<day<<" "<<month<<" "<<year<<" "<<hr<<" "<<mt<<" "<<sc<<" "<<gmt<<endl;
       time_t tmsec;
       tm t;
       t.tm_sec=sc;
@@ -190,7 +186,7 @@ int main(int argc, char *argv[])
     if(trybr.time)
     {
       brcount++;
-      cout<<trybr.time<<endl<<trybr.ip<<endl;
+      cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
     } 
   }
   cout<<"popitok bilo "<<brcount<<endl;
