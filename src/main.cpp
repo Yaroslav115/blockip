@@ -109,9 +109,10 @@ breaking iptyme(char *acbuf)
       while(acbuf[i]!='-')
       {
 	ipbuf[i]=acbuf[i];
+	trybr.ip[i]=ipbuf[i];
 	i++;
-        trybr.ip[i]=ipbuf[i];
-      }
+       }
+     // cout<<ipbuf<<endl;
     //читаем время
     //ищем символ [
       char *pch2=strchr(acbuf,'[');
