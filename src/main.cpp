@@ -24,6 +24,9 @@ struct breaking
   int time=0;
 }trybr;
 
+vector<breaking>enter;
+vector<breaking>::iterator it;
+
 //--------------------
 char *ubirakaprobelov(char *buf)
 {
@@ -206,12 +209,19 @@ int main(int argc, char *argv[])
   }
   char acbuf[128];
   
-  while(fgets(acbuf,128,faccesslog) != NULL)
+  while(fgets(acbuf,sizeof(acbuf),faccesslog) != NULL)
   {
     trybr=iptyme(acbuf);
     if(trybr.time)
     {
-      
+      enter.push_back(trybr);
+     /* if((enter[enter.end()].time-enter[enter.begin()].time)<=inivar[])
+      {
+	for(it=enter.begin();it!=enter.end();it++)
+	{
+	  ;
+	}
+      }*/
       brcount++;
       cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
       banhummer(trybr);
