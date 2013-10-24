@@ -211,16 +211,27 @@ int main(int argc, char *argv[])
   
   while(fgets(acbuf,sizeof(acbuf),faccesslog) != NULL)
   {
+    vector<breaking>tmp;
     trybr=iptyme(acbuf);
     if(trybr.time)
     {
       enter.push_back(trybr);
-     /* if((enter[enter.end()].time-enter[enter.begin()].time)<=inivar[])
+      for(unsigned int i=0;i<enter.size();i++)
       {
-	for(it=enter.begin();it!=enter.end();it++)
+	if((enter[i].time-enter.back().time)>atoi(inivar["Epoch"].c_str()))
 	{
-	  ;
-	}
+	  for (unsigned int j=i;j<enter.size();j++)
+	  {
+	      tmp[j-i]=enter[j];
+	  }
+	  enter=tmp;
+	}	
+      }
+      //получили enter с эпохой 60 подсчет по ip
+      /*for (unsigned i=0;i<(enter.size()-4);i++)
+      {
+	char tmpip[128]={0};
+	
       }*/
       brcount++;
       cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
