@@ -223,13 +223,11 @@ int main(int argc, char *argv[])
 	
 	for(unsigned int k=0;k<enter.size();k++)
 	{
-	  cerr<<"cikl"<<k;
 	  if((enter.back().time-enter[k].time)>atoi(inivar["Epoch"].c_str()))
 	   {
 	    cerr<<"deltatime"<<enter[k].time-enter.back().time<<endl;
 	    for (unsigned int j=k;j<enter.size();j++)
 	    {
-	      cerr<<"cikl"<<endl;
 	      tmp.push_back(enter[j]);
 	    }
 	  cerr<<3<<endl;
