@@ -216,24 +216,18 @@ int main(int argc, char *argv[])
     if(trybr.time)
     { 
       enter.push_back(trybr);
-      cout<<"sizeof1 "<<enter.size()<<endl;
+      cout<<"sizeof "<<enter.size()<<endl;
       if(enter.size()>atoi(inivar["Requests"].c_str()))
       {
-	cout<<"sizeof "<<enter.size()<<endl;
+	cout<<"vhod v cikl"<<enter.size()<<endl;
 	
-	for(unsigned int k=0;k<enter.size();k++)
+	for(unsigned int k=0; k<enter.size();k++)
 	{
-	  if((enter.back().time-enter[k].time)>atoi(inivar["Epoch"].c_str()))
-	   {
-	    cerr<<"deltatime"<<enter[k].time-enter.back().time<<endl;
-	    for (unsigned int j=k;j<enter.size();j++)
-	    {
-	      tmp.push_back(enter[j]);
-	    }
-	  cerr<<3<<endl;
-	  enter=tmp;
-	  }	
+	  if((enter.back().time-enter[k].time) < atoi(inivar["Epoch"].c_str()))
+		tmp.push_back(enter[k]);
 	}
+	enter = tmp;
+	tmp.clear();
       }
       /*
       //получили enter с эпохой 60 подсчет по ip
