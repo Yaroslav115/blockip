@@ -17,6 +17,8 @@ map<string,string>inivar;
 map<string,int>mnth;
 const char *flag="POST";
 int brcount=0;
+int requests=0;
+int epoch=0;
 
 struct breaking
 {
@@ -60,14 +62,14 @@ int inireader(void)
     cerr<<"Error open file"<<endl;
     return -1;
   }
-  while(fgets(buf,128,fini) != NULL)
+  while(fgets(buf,sizeof(buf),fini) != NULL)
   {
     ubirakaprobelov(buf);
     if(buf[0]=='\n')
       continue;
     //читаем строки ищем равно заносим в маp
-    char tmpvar[128]={0};
-    char tmpmean[128]={0};
+    char tmpvar[sizeof(buf)]={0};
+    char tmpmean[sizeof(buf)]={0};
     char *pch=strchr(buf,'=');
     int pos=pch-buf+1;//number of element =
     for (int i=0;i<pos-1;i++)
@@ -84,6 +86,8 @@ int inireader(void)
     cout<<inivar[tmpvar]<<endl;
     }
   fclose(fini);
+  requests=atoi(inivar["Requests"].c_str());
+  epoch=atoi(inivar["Epoch"].c_str());
   return 1; 
 }
 //----------------------
@@ -216,35 +220,44 @@ int main(int argc, char *argv[])
     if(trybr.time)
     { 
       enter.push_back(trybr);
-      cout<<"sizeof1 "<<enter.size()<<endl;
-      if(enter.size()>atoi(inivar["Requests"].c_str()))
+      cout<<"sizeof "<<enter.size()<<endl;
+      if(enter.size()>requests)
       {
-	cout<<"sizeof "<<enter.size()<<endl;
+	cout<<"vhod v cikl"<<enter.size()<<endl;
 	
-	for(unsigned int k=0;k<enter.size();k++)
+	for(unsigned int k=0; k<enter.size();k++)
 	{
-	  if((enter.back().time-enter[k].time)>atoi(inivar["Epoch"].c_str()))
-	   {
-	    cerr<<"deltatime"<<enter[k].time-enter.back().time<<endl;
-	    for (unsigned int j=k;j<enter.size();j++)
-	    {
-	      tmp.push_back(enter[j]);
-	    }
-	  cerr<<3<<endl;
-	  enter=tmp;
-	  }	
+	  if((enter.back().time-enter[k].time) < epoch)
+		tmp.push_back(enter[k]);
 	}
+	enter = tmp;
+	cout<<"razmer enter "<<enter.size()<<endl;
+	tmp.clear();
       }
-      /*
+      
       //получили enter с эпохой 60 подсчет по ip
-      /*for (unsigned i=0;i<(enter.size()-4);i++)
+      for (unsigned i=0;i<enter.size();i++)
       {
 	char tmpip[128]={0};
-	
-      }*/
+	cerr<<"memcpystart"<<endl;
+	memcpy(tmpip,enter[i].ip,sizeof(enter[i].ip));
+	int equalip=0;
+	for(unsigned j=i;j<(enter.size());j++)
+	{
+	  cerr<<"strcmp"<<endl;
+	  if(strcmp(tmpip,enter[j].ip)==0)
+	    equalip++;
+	  if(equalip==requests)
+	  {
+	    banhummer(enter[j]);
+	    brcount++;
+	    break;
+	  }
+	}
+      }
       brcount++;
       cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
-      banhummer(trybr);
+      
     } 
   }
   cout<<"popitok bilo "<<brcount<<endl;
