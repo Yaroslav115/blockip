@@ -216,6 +216,7 @@ int main(int argc, char *argv[])
     if(trybr.time)
     { 
       enter.push_back(trybr);
+      cout<<"sizeof1 "<<enter.size()<<endl;
       if(enter.size()>atoi(inivar["Requests"].c_str()))
       {
 	cout<<"sizeof "<<enter.size()<<endl;
@@ -223,13 +224,13 @@ int main(int argc, char *argv[])
 	for(unsigned int k=0;k<enter.size();k++)
 	{
 	  cerr<<"cikl"<<k;
-	  if((enter[k].time-enter.back().time)>atoi(inivar["Epoch"].c_str()))
+	  if((enter.back().time-enter[k].time)>atoi(inivar["Epoch"].c_str()))
 	   {
 	    cerr<<"deltatime"<<enter[k].time-enter.back().time<<endl;
 	    for (unsigned int j=k;j<enter.size();j++)
 	    {
 	      cerr<<"cikl"<<endl;
-	      tmp[j-k]=enter[j];
+	      tmp.push_back(enter[j]);
 	    }
 	  cerr<<3<<endl;
 	  enter=tmp;
