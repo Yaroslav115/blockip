@@ -1,0 +1,55 @@
+#! /bin/bash
+
+
+usage()
+{
+    echo "exblockip <block|unblock> <IP-address> <period> <cache-dir>"
+    exit
+}
+
+
+[[ -z $2 ]] && usage
+[[ -z $3 ]] && usage
+[[ -z $4 ]] && usage
+
+IP=$2
+PERIOD=$3
+CACHE_DIR=$4
+mkdir -p $CACHE_DIR
+
+
+FILENAME=$CACHE_DIR/$IP
+
+MDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+MNAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+MFILE=$MDIR/$MNAME
+
+
+
+block()
+{
+    if [ -f "$FILENAME" ] ; then echo "$IP already blocked."; exit; fi
+
+    touch "$FILENAME"
+    echo "$MFILE unblock $IP 0 $CACHE_DIR" | at now + $PERIOD minutes
+    echo "Block $IP"
+    exit
+}
+
+unblock()
+{
+    if [ ! -f "$FILENAME" ] ; then echo "Not found $IP"; exit; fi
+    
+    rm -f "$FILENAME"
+    echo "Unblock $IP"
+    exit
+}
+
+
+
+
+
+[[ "$1" = "block" ]] && block
+[[ "$1" = "unblock" ]] && unblock
+
+usage
