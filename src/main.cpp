@@ -227,18 +227,33 @@ int main(int argc, char *argv[])
 		tmp.push_back(enter[k]);
 	}
 	enter = tmp;
+	cout<<"razmer enter "<<enter.size()<<endl;
 	tmp.clear();
       }
-      /*
+      
       //получили enter с эпохой 60 подсчет по ip
-      /*for (unsigned i=0;i<(enter.size()-4);i++)
+      for (unsigned i=0;i<enter.size();i++)
       {
 	char tmpip[128]={0};
-	
-      }*/
+	cerr<<"memcpystart"<<endl;
+	memcpy(tmpip,enter[i].ip,sizeof(enter[i].ip));
+	cerr<<"memcpyfinissh"<<endl;
+	int equalip=0;
+	for(unsigned j=i;j<(enter.size());j++)
+	{
+	  cerr<<"strcmp"<<endl;
+	  if(strcmp(tmpip,enter[j].ip)==0)
+	    equalip++;
+	  if(equalip==atoi(inivar["Requests"].c_str()))
+	  {
+	    banhummer(enter[j]);
+	    brcount++;
+	  }
+	}
+      }
       brcount++;
       cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
-      banhummer(trybr);
+      
     } 
   }
   cout<<"popitok bilo "<<brcount<<endl;
