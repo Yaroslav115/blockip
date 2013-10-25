@@ -214,19 +214,29 @@ int main(int argc, char *argv[])
     vector<breaking>tmp;
     trybr=iptyme(acbuf);
     if(trybr.time)
-    {
+    { 
       enter.push_back(trybr);
-      for(unsigned int i=0;i<enter.size();i++)
+      if(enter.size()>atoi(inivar["Requests"].c_str()))
       {
-	if((enter[i].time-enter.back().time)>atoi(inivar["Epoch"].c_str()))
+	cout<<"sizeof "<<enter.size()<<endl;
+	
+	for(unsigned int k=0;k<enter.size();k++)
 	{
-	  for (unsigned int j=i;j<enter.size();j++)
-	  {
-	      tmp[j-i]=enter[j];
-	  }
+	  cerr<<"cikl"<<k;
+	  if((enter[k].time-enter.back().time)>atoi(inivar["Epoch"].c_str()))
+	   {
+	    cerr<<"deltatime"<<enter[k].time-enter.back().time<<endl;
+	    for (unsigned int j=k;j<enter.size();j++)
+	    {
+	      cerr<<"cikl"<<endl;
+	      tmp[j-k]=enter[j];
+	    }
+	  cerr<<3<<endl;
 	  enter=tmp;
-	}	
+	  }	
+	}
       }
+      /*
       //получили enter с эпохой 60 подсчет по ip
       /*for (unsigned i=0;i<(enter.size()-4);i++)
       {
