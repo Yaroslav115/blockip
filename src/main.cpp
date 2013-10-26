@@ -4,7 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h> 
 #include <iostream>
 #include <string>
 #include <vector>
@@ -19,7 +22,8 @@ const char *flag="POST";
 int brcount=0;
 int requests=0;
 int epoch=0;
-
+int period=0;
+string ininame;
 struct breaking
 {
   char ip[128]={0};
@@ -29,8 +33,40 @@ struct breaking
 vector<breaking>enter;
 vector<breaking>::iterator it;
 
+
+//----------------------------
+char* fgets_wait(char *buffer, unsigned int buffer_len, FILE *f)
+{
+  char *s;
+  do {
+    s = fgets(buffer, buffer_len, f);
+    if(s)
+      break;
+    int h = fileno(f);
+    clearerr(f);
+    fd_set rd;
+    FD_ZERO(&rd);
+    FD_SET(h, &rd);
+    timeval t;
+    t.tv_sec = 1;
+    t.tv_usec = 0;
+    int ret = select(h+1, &rd, 0, 0, &t);
+    if(ret < 0)
+      exit(-1);
+    if(ret == 0)
+    {
+      cout << "TIMEOUT" << endl;
+      continue;
+    }
+    continue;
+    } while(1);
+   return s;
+};
+
+
+
 //--------------------
-char *ubirakaprobelov(char *buf)
+char *uborkaprobelov(char *buf)
 {
   int len=strlen(buf);
   int cnt=0;
@@ -52,11 +88,13 @@ char *ubirakaprobelov(char *buf)
 //-----------------
 int inireader(void)
 {
+  log("read ini file %s", &ininame);
   FILE *fini;
   char buf[128];
   
   cerr << 1<< "\n";
-  fini= fopen("/home/yaroslav/projects/blockip/src/block.ini","r");
+  //fini= fopen("/home/yaroslav/projects/blockip/src/block.ini","r");
+  fini= fopen(ininame.c_str(),"r");
   if(!fini)
   {
     cerr<<"Error open file"<<endl;
@@ -64,7 +102,7 @@ int inireader(void)
   }
   while(fgets(buf,sizeof(buf),fini) != NULL)
   {
-    ubirakaprobelov(buf);
+    uborkaprobelov(buf);
     if(buf[0]=='\n')
       continue;
     //читаем строки ищем равно заносим в маp
@@ -88,6 +126,7 @@ int inireader(void)
   fclose(fini);
   requests=atoi(inivar["Requests"].c_str());
   epoch=atoi(inivar["Epoch"].c_str());
+  period=atoi(inivar["Period"].c_str());
   return 1; 
 }
 //----------------------
@@ -163,32 +202,73 @@ breaking iptyme(char *acbuf)
 int banhummer(breaking trybr)
 {
   FILE *banf;
-  string str=inivar["BlockDir"]+'/'+trybr.ip+".log";
+  string str=inivar["BlockDir"]+'/'+trybr.ip;
+  string strscript;
   str.erase(str.find(' '), 1);
-  cout<<str<<endl;
   if(trybr.time)
   {
     if(banf=fopen(str.c_str(),"r"))
     {  
       fclose(banf);
-      cerr<<"have file"<<endl;
+
       return 0;
     }
     else
     {
-      banf=fopen(str.c_str(),"w");
-      cerr<<"open file "<<str<<endl;
-      fputs(str.c_str(),banf);
-      fflush(banf);
-      fclose(banf);
+      cout<<trybr.ip<<endl;
+      strscript="/home/yaroslav/projects/blockip/scripts/exblockip block "+string(trybr.ip)+" "+inivar["Period"]+" "+inivar["BlockDir"];
+      cout<<strscript<<endl;
+      system(strscript.c_str());
     }
   }
   return 1;
 }
 
+int analise(char *acbuf)
+{
+  vector<breaking>tmp;
+    trybr=iptyme(acbuf);
+    if(trybr.time)
+    { 
+      enter.push_back(trybr);
+      if(enter.size()>requests)
+      {
+	for(unsigned int k=0; k<enter.size();k++)
+	{
+	  if((enter.back().time-enter[k].time) < epoch)
+		tmp.push_back(enter[k]);
+	}
+	enter = tmp;
+	tmp.clear();
+      }
+      
+      //получили enter с эпохой 60 подсчет по ip
+      for (unsigned i=0;i<enter.size();i++)
+      {
+	char tmpip[128]={0};
+	memcpy(tmpip,enter[i].ip,sizeof(enter[i].ip));
+	int equalip=0;
+	for(unsigned j=i;j<(enter.size());j++)
+	{
+	  if(strcmp(tmpip,enter[j].ip)==0)
+	    equalip++;
+	  if(equalip==requests)
+	  {
+	    banhummer(enter[j]);
+	    brcount++;
+	    break;
+	  }
+	}
+      }
+      brcount++;
+    }
+  return brcount;
+}
+
+
 int main(int argc, char *argv[])
 {
-  
+  ininame=argv[1];
   log("start log ip");
   mnth["Jan"] = 0;
   mnth["Feb"] = 1;
@@ -206,60 +286,19 @@ int main(int argc, char *argv[])
   inireader();
   FILE *faccesslog;
   faccesslog=fopen(inivar["SrcLog"].c_str(),"r");
+  log("Open access file %s", &inivar["SrcLog"]);
   if(!faccesslog)
   {
     cerr<<"Error open access file"<<endl;
+    log("Error open access file");
     return -1;
   }
   char acbuf[128];
   
-  while(fgets(acbuf,sizeof(acbuf),faccesslog) != NULL)
+  while(fgets_wait(acbuf,sizeof(acbuf),faccesslog) != NULL)
   {
-    vector<breaking>tmp;
-    trybr=iptyme(acbuf);
-    if(trybr.time)
-    { 
-      enter.push_back(trybr);
-      cout<<"sizeof "<<enter.size()<<endl;
-      if(enter.size()>requests)
-      {
-	cout<<"vhod v cikl"<<enter.size()<<endl;
-	
-	for(unsigned int k=0; k<enter.size();k++)
-	{
-	  if((enter.back().time-enter[k].time) < epoch)
-		tmp.push_back(enter[k]);
-	}
-	enter = tmp;
-	cout<<"razmer enter "<<enter.size()<<endl;
-	tmp.clear();
-      }
-      
-      //получили enter с эпохой 60 подсчет по ip
-      for (unsigned i=0;i<enter.size();i++)
-      {
-	char tmpip[128]={0};
-	cerr<<"memcpystart"<<endl;
-	memcpy(tmpip,enter[i].ip,sizeof(enter[i].ip));
-	int equalip=0;
-	for(unsigned j=i;j<(enter.size());j++)
-	{
-	  cerr<<"strcmp"<<endl;
-	  if(strcmp(tmpip,enter[j].ip)==0)
-	    equalip++;
-	  if(equalip==requests)
-	  {
-	    banhummer(enter[j]);
-	    brcount++;
-	    break;
-	  }
-	}
-      }
-      brcount++;
-      cout<<trybr.time<<endl<<trybr.ip<<endl<<endl;
-      
-    } 
+   brcount= analise(acbuf);
   }
-  cout<<"popitok bilo "<<brcount<<endl;
+
   return 0;
 };
