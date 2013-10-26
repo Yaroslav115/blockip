@@ -88,18 +88,18 @@ char *uborkaprobelov(char *buf)
 //-----------------
 int inireader(void)
 {
-  log("read ini file %s", &ininame);
+  log("read ini file %s", ininame.c_str());
   FILE *fini;
   char buf[128];
   
-  cerr << 1<< "\n";
-  //fini= fopen("/home/yaroslav/projects/blockip/src/block.ini","r");
   fini= fopen(ininame.c_str(),"r");
   if(!fini)
   {
+    log("Error open ini file");
     cerr<<"Error open file"<<endl;
     return -1;
   }
+  log("Ini parametres...");
   while(fgets(buf,sizeof(buf),fini) != NULL)
   {
     uborkaprobelov(buf);
@@ -122,6 +122,7 @@ int inireader(void)
     } 
     inivar[tmpvar]=tmpmean;
     cout<<inivar[tmpvar]<<endl;
+    log("%s%c%s",&tmpvar,'=',inivar[tmpvar].c_str());
     }
   fclose(fini);
   requests=atoi(inivar["Requests"].c_str());
@@ -134,7 +135,7 @@ int ishack(char *acbuf, const char *flag)//1 hack 0 no hack
 {
    if(strstr(acbuf,flag)!=NULL)
     {
-     if(strstr(acbuf,inivar["Template"].c_str())!=NULL)
+     if(strstr(acbuf,inivar["Template"].c_str())!=NULL)  
        return 1;
      else
        return 0;
@@ -187,6 +188,7 @@ breaking iptyme(char *acbuf)
       t.tm_isdst=0;
       tmsec=mktime(&t);
       trybr.time=tmsec;
+      log("%s%s%d",trybr.ip," TIME ",trybr.time);
       return trybr;
     }
     else
@@ -210,7 +212,8 @@ int banhummer(breaking trybr)
     if(banf=fopen(str.c_str(),"r"))
     {  
       fclose(banf);
-
+      log("Call ban but file exist");
+      cout<<"callBH,but file exist"<<endl;
       return 0;
     }
     else
@@ -218,6 +221,7 @@ int banhummer(breaking trybr)
       cout<<trybr.ip<<endl;
       strscript="/home/yaroslav/projects/blockip/scripts/exblockip block "+string(trybr.ip)+" "+inivar["Period"]+" "+inivar["BlockDir"];
       cout<<strscript<<endl;
+      log("Call ban script for ip %s",trybr.ip);
       system(strscript.c_str());
     }
   }
@@ -286,7 +290,7 @@ int main(int argc, char *argv[])
   inireader();
   FILE *faccesslog;
   faccesslog=fopen(inivar["SrcLog"].c_str(),"r");
-  log("Open access file %s", &inivar["SrcLog"]);
+  log("Open access file %s", inivar["SrcLog"].c_str());
   if(!faccesslog)
   {
     cerr<<"Error open access file"<<endl;
