@@ -213,7 +213,6 @@ int banhummer(breaking trybr)
     {  
       fclose(banf);
       log("Call ban but file exist");
-      cout<<"callBH,but file exist"<<endl;
       return 0;
     }
     else
